@@ -1,0 +1,132 @@
+
+    .input-container {
+        position: relative;
+        margin: 20px 0;
+        
+    }
+
+    .input-container input {
+        text-align: center;
+        width: 250px;  
+        height: 35px;  
+        padding: 20px;  
+        background-color: rgba(248, 248, 248, 0.881);
+        border: none;
+        outline: none;
+        border-bottom: 2px solid #000
+    }
+
+    .input-container svg {
+        position: absolute;
+        left: 90px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #000000;
+    }
+
+
+
+    button{
+        width: 180px;
+        height: 40px;
+        margin: 20px;
+        background-color: #48cae4;
+            color: white;
+        border-radius: 5px;
+        border: none;
+        box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.3);
+            margin-left: 20px;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        margin-left: 90px;
+        cursor: pointer;    
+    }
+
+    button:hover{
+        background-color: rgba(58, 131, 214, 0.393);
+    }
+ 
+
+    h1{
+        margin-top: 5px;
+        font-size: 3rem; 
+        font-family: Arial, sans-serif; 
+        margin-bottom: 0;
+     }
+    h3{
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        font-size: 3px;
+    }
+    p{
+        font-size: 15px;
+     }
+    
+
+    .main{
+        padding: 20px;
+        width: 420px;
+        height: auto;
+        margin-bottom: 150px;
+        border-radius: 5px;
+        background-color: rgba(239, 246, 246, 0.826);
+        box-shadow: 5px 5px 5px 5px rgba(255, 255, 255, 0.256);
+    
+    }
+    .text{
+        margin-left: 90px;
+        margin-right: auto  ;
+    }
+
+    .container {
+        background-image: url('../../../Front-End/src/Images/fondo.jpg');
+        background-size: cover;  
+        background-position: center;  
+        background-repeat: no-repeat;  
+        width: 100%;  
+        display: flex; 
+        justify-content: center;  
+        align-items: center; 
+        height: 100vh; 
+        }
+
+    html, body {
+        height: 100%;  
+        margin: 0; 
+    }
+
+    .logoInicio
+    {
+        margin-left: auto;
+        margin-right: auto;
+        width: 250px;
+        height: 200px;
+    }
+ 
+    .confirm-card {
+        width: 300px;
+        padding: 20px;
+        text-align: center;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        position: fixed;
+        top: 15%;
+        left: 75%;
+        z-index: 1000;  
+ 
+    }
+    
+    .confirm{
+        display: flex;
+        gap: 10px;
+         
+    }
+
+    label {
+        text-decoration: none;
+        color: inherit; /* Si deseas mantener el color del texto por defecto */
+        font-weight: normal; /* Cambia esto según el estilo que prefieras */
+    }
+    

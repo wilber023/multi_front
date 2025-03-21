@@ -1,0 +1,353 @@
+
+body{
+    background-color: rgba(190, 231, 239, 0.385);
+    height: 100%;
+width: 100%;
+}
+
+    .container-pricipal{
+        display: flex;
+    }
+      
+
+    img {   
+        border-radius: 50%;
+        width: 120px;
+        height: 110px;
+        filter:  
+        drop-shadow(0 0 10px rgba(255, 255, 255, 1));
+
+    }
+
+
+    h3 {
+        margin-top: 50px;
+        margin-right: auto;
+        font-size: 22px; 
+        font-family: 'Arial Black', Arial, sans-serif;  
+            letter-spacing: -0.5px; 
+        line-height: 1;  
+    }
+
+    .container-logo-name {
+        display: flex;
+        position: fixed;
+        justify-content: space-between;  
+        align-items: center; 
+         background-color: rgba(0, 255, 255, 0.12);
+        width: 100%;
+        height: 110px;
+    }
+    
+    .container-logo-name img {
+        width: 190px; 
+        height: auto;
+    }
+    
+    .container-logo-name h3 {
+        flex-grow: 1;  
+        text-align: center;  
+        margin: 0;
+    }   
+    
+    .exit{
+        margin: 30px;
+        display: flex;
+        gap: 5px;
+    }
+ 
+ 
+ 
+    
+    /* opciones */
+
+    .options-main
+    {
+        margin-top: 110px;
+        position: fixed;
+        flex: 1;
+        padding-right: 1rem;
+        background-color: rgba(190, 231, 239, 0.385);
+         height: auto;
+        width: 324px;
+    }
+ 
+    .options{
+        display: flex;
+        flex-direction: column;
+        
+        margin-right: 120px;
+    }.cards {
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        width: 338px;
+        height: 90px;
+        box-shadow: 1px 1px 1px 1px rgba(21, 20, 20, 0.482);
+        display: flex;
+        justify-content: center;  
+        align-items: center; 
+        background-color: white;
+        margin: 5px 0 0 0;  
+        cursor: pointer;
+    }
+    .cards:hover {
+        background-color: rgba(80, 204, 208, 0.55);
+        transform: scale(0.95);
+    }
+
+    .close {
+        font-size: 80px;
+        position: fixed;
+        bottom:30px; 
+        left: 3%; 
+        text-align: center;
+        margin-right: 120px;
+    }
+
+    .icon-container {
+        position: relative;
+        display: inline-block;
+    }
+
+    .tooltip {
+        visibility: hidden;
+        position: absolute;
+        bottom: 100%;  
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: black;
+        color: #fff;
+        padding: 5px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .icon-container:hover .tooltip {
+        visibility: visible;
+        opacity: 1;
+    }
+    .graph-container {
+        width: 80%;
+        height: 500px;
+        margin-bottom: auto;
+        margin-right: auto;
+        margin-top: 30px;
+        margin-left: auto;
+        display: flex;
+         margin-bottom: auto;
+        justify-content: center;
+        align-items: center;
+        background-color: #f9f9f9;
+        box-shadow: 3px 3px 3px 3px rgba(2, 2, 2, .4);
+    }
+
+    .information {
+         width: 80%;
+         height: auto;
+         margin-left: auto;
+         margin-top: 100px;
+         margin-bottom: 50px;
+ 
+    }
+
+    /* ADD */
+    .options-Add {
+        display: flex;
+        background-color: white;
+        box-shadow: 3px 3px 3px rgba(2, 2, 2, 0.4);
+        width: 350px; 
+        height: 60px;
+        padding: 5px;
+        align-items: center;
+        gap: 20px;
+        justify-content: center;
+        margin-right: 630px;
+        margin-bottom: 430px;
+        cursor: pointer;
+    }
+    
+    .card {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        width: 160px;
+        height: 40px;
+          border-radius: 8px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+
+    .cardAdd{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        width: 160px;
+        height: 40px;
+          border-radius: 8px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .cardAdd:hover{
+        transform: scale(1.05);
+        box-shadow: 3px 3px 8px rgba(3, 91, 22, 0.3);
+        background-color: rgba(89, 233, 73, 0.331);
+    }
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: 3px 3px 8px rgba(248, 4, 4, 0.3);
+        background-color: rgba(255, 0, 0, 0.451);
+    }
+    
+    .add, .delete {
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+     /* Estilos para el formulario */
+.Form-user {
+    width: 350px;
+    height: 480px;
+    padding: 10px;
+      background-color: #f9f9f9;  
+    border-radius: 8px;  
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);  
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    gap: 10px; 
+    text-align: center;
+    margin: auto; 
+}
+
+ 
+  h3 {
+ 
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+ 
+label {
+    display: flex;
+    flex-direction: column;  
+    align-items: flex-start;
+    width: 100%;  
+    margin-bottom: 10px;
+    text-decoration: none;
+}
+
+.register-btn {
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px 0;
+    background-color: #48cae4; 
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+}
+
+input{
+    
+    width: 100%; 
+    border: none;
+    outline: none;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; 
+    transition: border-color 0.3s ease; }
+.register-btn:hover {
+    background-color: #0f4622a3;  
+}
+
+.form-container {
+    position: fixed;    
+    top: 130px; 
+     width: 600px;
+     height: 400px;  
+    transition: right 0.3s ease;  
+    z-index: 1000;  
+}
+
+.options-Add .form-container {
+    right: 140px;  
+}
+
+/* delete user */
+
+.delete-user {
+    width: 300px;
+    padding: 5px;
+    margin-left: 125px;
+     margin-top: 35px;
+    text-align: center;
+    box-shadow: 2px 2px 2px 2px rgba(225, 7, 7, 0.482);
+
+    
+}
+
+.confirmation-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;  
+}
+
+ 
+
+input {
+    display: block;
+    margin: 10px auto;
+    padding: 8px;
+    width: 90%;
+}
+
+button {
+    padding: 10px 15px;
+    margin-top: 10px;
+}
+.closeDelte {
+    width: auto;
+    height: auto;
+    position: absolute;  
+    top: -10px;
+    right: 10px;  
+    cursor: pointer;  
+    font-size: 24px; 
+    color: #000;  
+    background-color: transparent;  
+}
+
+.closeDelte:hover {
+ 
+    color: rgb(248, 10, 10);  
+}
+
+.name-cava {
+    font-size: 3rem; 
+    font-family: Arial, sans-serif;  
+}
+
+
+ 
+
+ 
