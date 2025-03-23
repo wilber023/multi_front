@@ -1,20 +1,36 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./componentes/moleculas/ProtectedRoute";
-import Login from "./Pages/Login/Inicio";
-import HomeAdmin from "./Pages/Admin/Home";
-import Empleado from "./Pages/Empleado/User";
+import { Suspense, lazy } from "react";
+ 
+ 
+ 
+
+// Lazy loading de componentes
+const Login = lazy(() => import("./Pages/Login/Inicio"));
+const HomeAdmin = lazy(() => import("./Pages/Admin/Home"));
+const Empleado = lazy(() => import("./Pages/Empleado/User"));
+const NotFound = lazy(() => import("./Notfound/NotFound"));
+
+const LoadingFallback = () => <div>Cargando...</div>;
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Login />,
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <Login />
+   
+      </Suspense>
+    ),
   },
   {
     path: "/home",
     element: (
       <ProtectedRoute>
-        <HomeAdmin />
+        <Suspense fallback={<LoadingFallback />}>
+          <HomeAdmin />
+        </Suspense>
       </ProtectedRoute>
     ),
   },
@@ -22,10 +38,20 @@ const router = createBrowserRouter([
     path: "/homeUser",
     element: (
       <ProtectedRoute>
-        <Empleado />
+        <Suspense fallback={<LoadingFallback />}>
+          <Empleado />
+        </Suspense>
       </ProtectedRoute>
     ),
   },
+  {
+    path: "*", 
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <NotFound />
+      </Suspense>
+    ),
+  }
 ]);
 
 function App() {

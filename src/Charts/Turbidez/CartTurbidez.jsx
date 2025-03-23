@@ -1,90 +1,47 @@
-import  { useEffect, useState } from 'react';
-import ReactEcharts from 'echarts-for-react';
-import PropTypes from 'prop-types';
+import { useEffect, useState } from "react";
+import ReactEcharts from "echarts-for-react";
+import PropTypes from "prop-types";
+
+
+
+ 
+
 
 const TurbidezChart = ({ data = [], windowSize = 3 }) => {
-    const chartData = Array.isArray(data) ? data : [];
+    const [smoothedData, setSmoothedData] = useState([]);
+    const [worker, setWorker] = useState(null);
     const maxTurbidez = 3000;
     const [alertTriggered, setAlertTriggered] = useState(false);
 
-    // Calcular la media  de tipo L de 3 en 3
-    const calculateMovingAverage = (data, windowSize) => {
-        const result = [];
-        for (let i = 0; i < data.length; i++) {
-            const windowData = data.slice(Math.max(i - windowSize + 1, 0), i + 1);
-            const average = windowData.reduce((acc, val) => acc + val.turbidez, 0) / windowData.length;
-            result.push({ timestamp: data[i].timestamp, turbidez: average });
-        }
-        return result;
-    };
+    useEffect(() => {
+        const newWorker = new Worker(new URL("../workers/turbidez.js", import.meta.url));
 
-    const smoothedData = calculateMovingAverage(chartData, windowSize);
+        newWorker.onmessage = (event) => {
+            setSmoothedData(event.data);
+        };
 
-    const options = {
-        title: {
-            text: 'Niveles de Turbidez del Agua'
-        },
-        xAxis: {
-            type: 'category',
-            data: smoothedData.map((entry) => entry.timestamp),
-            axisLabel: {
-                interval: 0,
-                rotate: 0,
-            }
-        },
-        yAxis: {
-            type: 'value',
-            name: 'Turbidez (0 - 4095)',
-            min: 0,
-            max: 4095,
-            splitLine: {
-                lineStyle: { type: 'dashed' },
-            },
-            axisLine: { lineStyle: { color: '#409EFF' } },
-        },
-        series: [
-            {
-                data: smoothedData.map((entry) => entry.turbidez),
-                type: 'line',
-                smooth: true,
-                areaStyle: {},
-                lineStyle: {
-                    color: '#409EFF'
-                },
-                name: 'Turbidez (Media Móvil)',
-                markLine: {
-                    data: [
-                        {
-                            yAxis: maxTurbidez,
-                            label: {
-                                formatter: 'Nivel Máximo',
-                                position: 'end',
-                                color: 'red'
-                            },
-                            lineStyle: {
-                                color: 'red',
-                                type: 'dashed'
-                            }
-                        }
-                    ]
-                }
-            }
-        ]
-    };
+        setWorker(newWorker);
+
+        return () => newWorker.terminate(); // Limpia el worker al desmontar el componente
+    }, []);
 
     useEffect(() => {
-        const exceedsLimit = chartData.some((entry) => entry.turbidez > maxTurbidez);
+        if (worker) {
+            worker.postMessage({ data, windowSize }); // Enviar datos al Worker
+        }
+    }, [data, windowSize, worker]);
+
+    useEffect(() => {
+        const exceedsLimit = data.some((entry) => entry.turbidez > maxTurbidez);
 
         if (exceedsLimit && !alertTriggered) {
             const alertMessage = "¡Alerta! El nivel de turbidez ha excedido el límite recomendado para los peces.";
-            fetch('http://localhost:3000/api/tanque', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+            fetch("http://localhost:3000/api/tanque", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ message: alertMessage })
             })
-            .then(response => {
+            .then((response) => {
                 if (response.ok) {
                     setAlertTriggered(true);
                     console.log("Alerta de correo enviada");
@@ -92,13 +49,47 @@ const TurbidezChart = ({ data = [], windowSize = 3 }) => {
                     console.error("Error al enviar la alerta");
                 }
             })
-            .catch((error) => {
-                console.error("Error en la solicitud de alerta:", error);
-            });
+            .catch((error) => console.error("Error en la solicitud de alerta:", error));
         }
-    }, [chartData, maxTurbidez, alertTriggered]);
+    }, [data, maxTurbidez, alertTriggered]);
 
-    return <ReactEcharts option={options} style={{ height: '400px', width: '100%' }} />;
+    const options = {
+        title: { text: "Niveles de Turbidez del Agua" },
+        xAxis: {
+            type: "category",
+            data: smoothedData.map((entry) => entry.timestamp),
+            axisLabel: { interval: 0, rotate: 0 }
+        },
+        yAxis: {
+            type: "value",
+            name: "Turbidez (0 - 4095)",
+            min: 0,
+            max: 4095,
+            splitLine: { lineStyle: { type: "dashed" } },
+            axisLine: { lineStyle: { color: "#409EFF" } }
+        },
+        series: [
+            {
+                data: smoothedData.map((entry) => entry.turbidez),
+                type: "line",
+                smooth: true,
+                areaStyle: {},
+                lineStyle: { color: "#409EFF" },
+                name: "Turbidez (Media Móvil)",
+                markLine: {
+                    data: [
+                        {
+                            yAxis: maxTurbidez,
+                            label: { formatter: "Nivel Máximo", position: "end", color: "red" },
+                            lineStyle: { color: "red", type: "dashed" }
+                        }
+                    ]
+                }
+            }
+        ]
+    };
+
+    return <ReactEcharts option={options} style={{ height: "400px", width: "100%" }} />;
 };
 
 TurbidezChart.propTypes = {

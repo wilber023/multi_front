@@ -1,17 +1,40 @@
-import  { useState } from "react";
+import { useState, useEffect } from "react";
 import Input_Main from "../../atomos/Input-Main";
-import '../../../Styles/Home.css';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import "../../../Styles/Home.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Form() {
+
+
+
     const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        password: '',
-        rol: ''
+        name: "",
+        email: "",
+        password: "",
+        rol: "",
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [worker, setWorker] = useState(null);
+
+    useEffect(() => {
+        const newWorker = new Worker(new URL("../../workers/registerUserWorker.js", import.meta.url));
+
+        newWorker.onmessage = (event) => {
+            const { success, message } = event.data;
+            if (success) {
+                toast.success(message);
+                setFormData({ name: "", email: "", password: "", rol: "" });
+            } else {
+                toast.error(message);
+            }
+            setIsSubmitting(false);
+        };
+
+        setWorker(newWorker);
+
+        return () => newWorker.terminate(); // Limpia el worker cuando el componente se desmonta
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -44,30 +67,13 @@ function Form() {
         return true;
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         if (validate()) {
             setIsSubmitting(true);
-            try {
-                const response = await fetch('https://api.example.com/users', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                if (response.ok) {
-                    toast.success("User registered successfully!");
-                    setFormData({ name: '', email: '', password: '', rol: '' });
-                } else {
-                    toast.error("Failed to register user");
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                toast.error("An error occurred");
+            if (worker) {
+                worker.postMessage({ formData });
             }
-            setIsSubmitting(false);
         }
     };
 
@@ -90,7 +96,8 @@ function Form() {
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
-                style={{ width: "300px", marginLeft: "20px",  whiteSpace: "nowrap"}} />
+                style={{ width: "300px", marginLeft: "20px", whiteSpace: "nowrap" }}
+            />
         </form>
     );
 }
