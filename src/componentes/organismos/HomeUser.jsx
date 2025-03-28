@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense, useTransition } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import "../../Styles/Home.css";
 
 // Lazy Loading para componentes pesados
@@ -11,10 +11,9 @@ const TurbidezChart = lazy(() => import("../../Charts/Turbidez/CartTurbidez"));
 
 function UserHome() {
     const [activeComponent, setActiveComponent] = useState(null);
-    const [isPending, startTransition] = useTransition();
 
     const toggleComponent = (componentName) => {
-        startTransition(() => {
+        React.startTransition(() => {
             setActiveComponent((prevComponent) => (prevComponent === componentName ? null : componentName));
         });
     };

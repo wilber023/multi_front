@@ -2,16 +2,10 @@ import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
 
-
  
-
-
-
 Chart.register(...registerables);
 
 const LineChartWater = () => {
-
- 
 
     const [waterLevels, setWaterLevels] = useState(new Array(7).fill(0)); // Estado para los datos dinámicos
     const [worker, setWorker] = useState(null);

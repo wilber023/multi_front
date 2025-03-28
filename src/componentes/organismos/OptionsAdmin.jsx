@@ -1,7 +1,7 @@
-import "../../Styles/Home.css";
-import { useState, lazy, Suspense, useTransition } from "react";
+import React, { useState, lazy, Suspense } from "react";
 
-// Lazy loading para componentes pesados
+import '../../../src/Styles/Home.css'
+
 const FishMonitoring = lazy(() => import("../moleculas/HomeOptios/Fish"));
 const RegisterNewUser = lazy(() => import("../moleculas/HomeOptios/RegisterUser"));
 const InformativeSite = lazy(() => import("../moleculas/HomeOptios/site"));
@@ -13,10 +13,9 @@ const TurbidezChart = lazy(() => import("../../Charts/Turbidez/CartTurbidez"));
 
 function Options() {
     const [activeComponent, setActiveComponent] = useState(null);
-    const [isPending, startTransition] = useTransition();
 
     const toggleComponent = (componentName) => {
-        startTransition(() => {
+        React.startTransition(() => {
             setActiveComponent(prevComponent => prevComponent === componentName ? null : componentName);
         });
     };

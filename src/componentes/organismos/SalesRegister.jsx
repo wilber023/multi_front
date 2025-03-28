@@ -1,45 +1,82 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../Styles/Sales.css";
-import Input_Main from "../atomos/Input-Main";
 
 function Sales() {
-
- 
-
- 
     const [userId, setUserId] = useState("");
     const [quantity, setQuantity] = useState(0);
     const [fishDetails, setFishDetails] = useState([]);
     const [showSummary, setShowSummary] = useState(false);
     const [worker, setWorker] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    
+    const isFormValid = useMemo(() => {
+       
+        if (!userId || userId.trim() === "") {
+            return false;
+        }
+
+       
+        if (quantity <= 0 || quantity > 10) {
+            return false;
+        }
+
+ 
+        return fishDetails.every(fish => 
+            fish.weight && 
+            parseFloat(fish.weight) > 0 && 
+            fish.type && 
+            fish.price && 
+            parseFloat(fish.price) > 0
+        );
+    }, [userId, quantity, fishDetails]);
 
     useEffect(() => {
-        const newWorker = new Worker(new URL("../../workers/registerSaleWorker.js", import.meta.url));
+        const newWorker = new Worker(new URL("../../workers/registerSale.js", import.meta.url));
 
         newWorker.onmessage = (event) => {
-            const { success, message } = event.data;
+            const { success, message, saleId } = event.data;
+            setIsLoading(false);
+
             if (success) {
                 toast.success(message);
-                setUserId("");
-                setQuantity(0);
-                setFishDetails([]);
-                setShowSummary(false);
+                console.log(`Sale registered with ID: ${saleId}`);
+                resetForm();
             } else {
                 toast.error(message);
             }
         };
 
+        newWorker.onerror = (error) => {
+            setIsLoading(false);
+            toast.error(`Worker error: ${error.message}`);
+        };
+
         setWorker(newWorker);
 
-        return () => newWorker.terminate(); // Limpia el worker cuando el componente se desmonta
+        return () => newWorker.terminate();
     }, []);
 
+    const resetForm = () => {
+        setUserId("");
+        setQuantity(0);
+        setFishDetails([]);
+        setShowSummary(false);
+        setIsLoading(false);
+    };
+
     const handleQuantityChange = (e) => {
-        const value = parseInt(e.target.value) || 0;
+        const value = Math.min(Math.max(parseInt(e.target.value) || 0, 0), 10);
         setQuantity(value);
-        setFishDetails(Array.from({ length: value }, () => ({ weight: "", type: "", price: "" })));
+        setFishDetails(
+            Array.from({ length: value }, () => ({ 
+                weight: "", 
+                type: "", 
+                price: "" 
+            }))
+        );
     };
 
     const handleFishDetailChange = (index, field, value) => {
@@ -52,12 +89,26 @@ function Sales() {
     };
 
     const handleReviewSale = () => {
+        if (!isFormValid) {
+            toast.error("Please complete all fields correctly");
+            return;
+        }
         setShowSummary(true);
     };
 
     const handleConfirmSale = () => {
-        if (worker) {
-            worker.postMessage({ userId, quantity, fishDetails });
+        if (!isFormValid) {
+            toast.error("Please check all sale details");
+            return;
+        }
+
+        if (worker && !isLoading) {
+            setIsLoading(true);
+            worker.postMessage({ 
+                userId, 
+                quantity, 
+                fishDetails 
+            });
         }
     };
 
@@ -70,95 +121,92 @@ function Sales() {
             <h1>SALES REGISTRATION</h1>
 
             <section>
-                <Input_Main
-                    label="ID User:"
-                    type="number"
-                    placeholder="ID address"
-                    required
-                    name="userId"
+                <input
+                    type="text"
                     value={userId}
                     onChange={(e) => setUserId(e.target.value)}
+                    placeholder="User ID"
+                    disabled={isLoading}
                 />
-                <Input_Main
-                    label="Quantity (No. of Fish):"
+                <input
                     type="number"
-                    placeholder="num pez address"
-                    required
-                    name="quantity"
                     value={quantity}
                     onChange={handleQuantityChange}
+                    placeholder="Number of Fish"
+                    min="0"
+                    max="10"
+                    disabled={isLoading}
                 />
             </section>
 
-            <section className="select-pez">
+            <section className="fish-details">
                 {fishDetails.map((fish, index) => (
-                    <div key={index} style={{ marginBottom: "1rem" }}>
-                        <Input_Main
-                            label={`Fish ${index + 1} Weight:`}
+                    <div key={index}>
+                        <input
                             type="number"
-                            placeholder="Enter weight"
-                            required
                             value={fish.weight}
                             onChange={(e) => handleFishDetailChange(index, "weight", e.target.value)}
+                            placeholder={`Fish ${index + 1} Weight`}
+                            disabled={isLoading}
                         />
-                        <label>Type:</label>
-                        <select value={fish.type} onChange={(e) => handleFishDetailChange(index, "type", e.target.value)}>
-                            <option value="">Select Type</option>
+                        <select
+                            value={fish.type}
+                            onChange={(e) => handleFishDetailChange(index, "type", e.target.value)}
+                            disabled={isLoading}
+                        >
+                            <option value="">Select Fish Type</option>
                             <option value="Tilapia">Tilapia</option>
                             <option value="Bagre">Bagre</option>
                             <option value="Otro">Otro</option>
                         </select>
-                        <Input_Main
-                            label="Price:"
+                        <input
                             type="number"
-                            placeholder="Enter price"
-                            required
                             value={fish.price}
                             onChange={(e) => handleFishDetailChange(index, "price", e.target.value)}
+                            placeholder={`Fish ${index + 1} Price`}
+                            disabled={isLoading}
                         />
                     </div>
                 ))}
             </section>
 
-            <button onClick={handleReviewSale}>Review sale</button>
+            <button 
+                onClick={handleReviewSale} 
+                disabled={isLoading || !isFormValid}
+            >
+                Review Sale
+            </button>
 
             {showSummary && (
-                <div className="popup-background">
-                    <section className="resumen">
-                        <h2>Sales summary</h2>
-                        <p>
-                            <strong>ID User:</strong> {userId}
-                        </p>
-                        <p>
-                            <strong>Quantity:</strong> {quantity}
-                        </p>
-                        {fishDetails.map((fish, index) => (
-                            <p key={index}>
-                                <strong>Fish {index + 1}:</strong> Weight - {fish.weight}, Type - {fish.type}, Price -{" "}
-                                {fish.price}
+                <div className="popup-summary">
+                    <h2>Sale Summary</h2>
+                    <p>User ID: {userId}</p>
+                    <p>Quantity: {quantity}</p>
+                    {fishDetails.map((fish, index) => (
+                        <div key={index}>
+                            <p>Fish {index + 1}: 
+                                Weight: {fish.weight}, 
+                                Type: {fish.type}, 
+                                Price: {fish.price}
                             </p>
-                        ))}
-                        <button onClick={handleConfirmSale} style={{ width: "200px" }}>
-                            Confirm and Register Sale
-                        </button>
-                        <button onClick={handleCancel} style={{ backgroundColor: "red", width: "200px" }}>
-                            Cancel
-                        </button>
-                    </section>
+                        </div>
+                    ))}
+                    <button 
+                        onClick={handleConfirmSale}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? "Processing..." : "Confirm Sale"}
+                    </button>
+                    <button 
+                        onClick={handleCancel}
+                        disabled={isLoading}
+                    >
+                        Cancel
+                    </button>
                 </div>
             )}
 
-            <ToastContainer
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={true}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                style={{ width: "300px", marginLeft: "20px", whiteSpace: "nowrap" }}
-            />
+            <ToastContainer />
         </div>
     );
 }
